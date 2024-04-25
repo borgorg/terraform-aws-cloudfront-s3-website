@@ -17,6 +17,16 @@ locals {
   default_certs = var.use_default_domain ? ["default"] : []
   acm_certs     = var.use_default_domain ? [] : ["acm"]
   domain_name   = var.use_default_domain ? [] : [var.domain_name]
+
+  logging_config = (length(var.logging_bucket) == 0 ? [] :
+    [
+      {
+        bucket          = var.logging_bucket
+        include_cookies = false
+        prefix          = var.logging_prefix
+      }
+    ]
+  )
 }
 
 data "aws_acm_certificate" "acm_cert" {
@@ -110,7 +120,7 @@ data "aws_route53_zone" "domain_name" {
 ### ROUTE53 ###
 
 resource "aws_route53_record" "route53_record" {
-  count      = var.use_default_domain ? 0 : 1
+  count = var.use_default_domain ? 0 : 1
   depends_on = [
     aws_cloudfront_distribution.s3_distribution
   ]
@@ -182,7 +192,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   restrictions {
     geo_restriction {
       restriction_type = var.cloudfront_geo_restriction_restriction_type
-      locations = []
+      locations        = []
     }
   }
   dynamic "viewer_certificate" {
@@ -198,6 +208,16 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       acm_certificate_arn      = data.aws_acm_certificate.acm_cert[0].arn
       ssl_support_method       = "sni-only"
       minimum_protocol_version = "TLSv1"
+    }
+  }
+
+  dynamic "logging_config" {
+    for_each = local.logging_config[*]
+
+    content {
+      bucket          = logging_config.value.bucket
+      include_cookies = lookup(logging_config.value, "include_cookies", null)
+      prefix          = lookup(logging_config.value, "prefix", null)
     }
   }
 

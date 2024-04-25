@@ -68,3 +68,15 @@ variable "cloudfront_geo_restriction_locations" {
   }
 
 }
+
+variable "logging_bucket" {
+  type        = string
+  description = "An existing bucket to log requests to, null if no logging"
+  default     = ""
+}
+
+variable "logging_prefix" {
+  type        = string
+  description = "A prefix for the logging_bucket, null if not used"
+  default     = ""
+}
