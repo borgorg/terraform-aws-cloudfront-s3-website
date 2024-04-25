@@ -76,3 +76,9 @@ variable "logging_prefix" {
   description = "A prefix for the logging_bucket, null if not used"
   default     = ""
 }
+
+variable "configure_website" {
+  type        = bool
+  description = "Set false to not add a bucket website configuration"
+  default     = true
+}

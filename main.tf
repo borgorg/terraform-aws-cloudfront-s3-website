@@ -72,6 +72,8 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
 }
 
 resource "aws_s3_bucket_website_configuration" "s3_bucket" {
+  count = (var.configure_website == true) ? 1 : 0
+
   bucket = aws_s3_bucket.s3_bucket.id
 
   index_document {
