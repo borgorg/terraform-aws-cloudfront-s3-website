@@ -82,3 +82,9 @@ variable "configure_website" {
   description = "Set false to not add a bucket website configuration"
   default     = true
 }
+
+variable "distribution_response_page_path" {
+  type        = string
+  description = "Error response page path, default to '/'"
+  default     = "/"
+}
