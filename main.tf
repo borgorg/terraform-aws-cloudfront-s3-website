@@ -227,7 +227,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     error_code            = 403
     response_code         = 200
     error_caching_min_ttl = 0
-    response_page_path    = "/index.html"
+    response_page_path    = var.distribution_response_page_path
   }
 
   wait_for_deployment = false
